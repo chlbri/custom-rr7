@@ -19904,7 +19904,7 @@
     }
   });
 
-  // app/layout.server.tsx
+  // src/app/layout.server.tsx
   var layout_server_exports = {};
   __export(layout_server_exports, {
     action: () => action,
@@ -19915,27 +19915,27 @@
     return { message: db.message };
   }
   async function action({ request }) {
-    let formData = await request.formData();
+    const formData = await request.formData();
     db.message = String(formData.get("message"));
     return { ok: true };
   }
   var db;
   var init_layout_server = __esm({
-    "app/layout.server.tsx"() {
+    "src/app/layout.server.tsx"() {
       "use strict";
       db = { message: "Hello world!" };
     }
   });
 
-  // app/layout.client.tsx
+  // src/app/layout.client.tsx
   var layout_client_exports = {};
   __export(layout_client_exports, {
     action: () => action2,
     loader: () => loader2
   });
   async function loader2({ request }) {
-    let url = new URL(request.url);
-    let res = await fetch(url, {
+    const url = new URL(request.url);
+    const res = await fetch(url, {
       headers: {
         Accept: "application/json",
         "X-Route-Id": "layout"
@@ -19944,8 +19944,8 @@
     return res.json();
   }
   async function action2({ request }) {
-    let url = new URL(request.url);
-    let res = await fetch(url, {
+    const url = new URL(request.url);
+    const res = await fetch(url, {
       method: "POST",
       // @ts-expect-error this is valid, types are wrong
       body: new URLSearchParams(await request.formData()),
@@ -19958,12 +19958,12 @@
     return res.json();
   }
   var init_layout_client = __esm({
-    "app/layout.client.tsx"() {
+    "src/app/layout.client.tsx"() {
       "use strict";
     }
   });
 
-  // entry.client.tsx
+  // src/entry.client.tsx
   var import_react = __toESM(require_react(), 1);
   var import_client = __toESM(require_client(), 1);
 
@@ -25341,18 +25341,20 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
     return /* @__PURE__ */ React14.createElement(RouterProvider, { flushSync: ReactDOM.flushSync, ...props });
   }
 
-  // app/about.tsx
+  // src/utils.ts
+  var isServer = typeof document === "undefined";
+
+  // src/app/about.tsx
   var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
   function About() {
-    let data2 = useLoaderData();
+    const data2 = useLoaderData();
     return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { children: data2.message });
   }
 
-  // app/about.loader.tsx
+  // src/app/about.loader.tsx
   async function load() {
     await new Promise((resolve) => setTimeout(resolve, 200));
-    let isServer2 = typeof document === "undefined";
-    let env = isServer2 ? "server" : "client";
+    const env = isServer ? "server" : "client";
     return data(
       { message: `About loader from ${env} loader` },
       {
@@ -25361,16 +25363,16 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
     );
   }
 
-  // app/home.tsx
+  // src/app/home.tsx
   var import_jsx_runtime2 = __toESM(require_jsx_runtime(), 1);
   function Home() {
     return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h1", { children: "Home" });
   }
 
-  // app/layout.tsx
+  // src/app/layout.tsx
   var import_jsx_runtime3 = __toESM(require_jsx_runtime(), 1);
   function Layout() {
-    let data2 = useLoaderData();
+    const data2 = useLoaderData();
     return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("html", { children: [
       /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("head", { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("title", { children: "React Router Custom Framework" }) }),
       /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("body", { children: [
@@ -25400,46 +25402,44 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
     ] });
   }
 
-  // app/routes.ts
-  var isServer = typeof document === "undefined";
-  var routes_default = [
-    {
-      id: "layout",
-      path: "/",
-      Component: Layout,
-      // up to you where your loaders run (client or server), this one dynamically
-      // imports the correct one to avoid putting the server code in client
-      // bundles
-      async loader(args) {
-        let mod = await (isServer ? Promise.resolve().then(() => (init_layout_server(), layout_server_exports)) : Promise.resolve().then(() => (init_layout_client(), layout_client_exports)));
-        return mod.loader(args);
+  // src/app/routes.ts
+  var routes_default = {
+    id: "layout",
+    path: "/",
+    Component: Layout,
+    // up to you where your loaders run (client or server), this one dynamically
+    // imports the correct one to avoid putting the server code in client
+    // bundles
+    async loader(args) {
+      const mod = await (isServer ? Promise.resolve().then(() => (init_layout_server(), layout_server_exports)) : Promise.resolve().then(() => (init_layout_client(), layout_client_exports)));
+      console.log("context =>", args.context);
+      return mod.loader(args);
+    },
+    // same with the action, you'll probably want to abstract this kind of stuff
+    // in a createRoute() kind of thing
+    async action(args) {
+      const mod = await (isServer ? Promise.resolve().then(() => (init_layout_server(), layout_server_exports)) : Promise.resolve().then(() => (init_layout_client(), layout_client_exports)));
+      return mod.action(args);
+    },
+    children: [
+      {
+        id: "home",
+        index: true,
+        Component: Home
       },
-      // same with the action, you'll probably want to abstract this kind of stuff
-      // in a createRoute() kind of thing
-      async action(args) {
-        let mod = await (isServer ? Promise.resolve().then(() => (init_layout_server(), layout_server_exports)) : Promise.resolve().then(() => (init_layout_client(), layout_client_exports)));
-        return mod.action(args);
-      },
-      children: [
-        {
-          id: "home",
-          index: true,
-          Component: Home
-        },
-        {
-          id: "about",
-          path: "about",
-          Component: About,
-          // this loader runs in both places
-          loader: load
-        }
-      ]
-    }
-  ];
+      {
+        id: "about",
+        path: "about",
+        Component: About,
+        // this loader runs in both places
+        loader: load
+      }
+    ]
+  };
 
-  // entry.client.tsx
+  // src/entry.client.tsx
   var import_jsx_runtime4 = __toESM(require_jsx_runtime(), 1);
-  var router = createBrowserRouter(routes_default, {
+  var router = createBrowserRouter([routes_default], {
     // need to ensure this script runs AFTER <StaticRouterProvider> in
     // entry.server.tsx so that window.__staticRouterHydrationData is available
     hydrationData: window.__staticRouterHydrationData
@@ -25518,7 +25518,7 @@ react-router/dist/development/chunk-K6AXKMTT.mjs:
    * @license MIT
    *)
 
-react-router/dist/development/dom-export.mjs:
+react-router/dist/development/index.mjs:
   (**
    * react-router v7.1.1
    *
@@ -25530,7 +25530,7 @@ react-router/dist/development/dom-export.mjs:
    * @license MIT
    *)
 
-react-router/dist/development/index.mjs:
+react-router/dist/development/dom-export.mjs:
   (**
    * react-router v7.1.1
    *
