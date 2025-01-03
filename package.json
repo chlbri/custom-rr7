@@ -11,9 +11,9 @@
     "watch:server": "tsc --outDir dist --watch",
     "build:client": "esbuild --bundle ./src/entry.client.tsx --outdir=public/js --sourcemap",
     "watch:client": "esbuild --bundle ./src/entry.client.tsx --outdir=public/js --sourcemap --watch",
-    "dev": "concurrently 'pnpm run watch:server' 'pnpm run watch:client' 'node --watch ./dist/server.js'",
+    "dev": "concurrently 'pnpm run watch:server' 'pnpm run watch:client' 'node --watch ./dist/index.js'",
     "build": "pnpm run build:server && pnpm run build:client ",
-    "start": "pnpm run build && node ./dist/server.js",
+    "start": "pnpm run build && node ./dist/index.js",
     "upgrade": "pnpm upgrade --latest"
   },
   "keywords": [],
