@@ -1,10 +1,10 @@
-import { StrictMode } from "react";
-import { hydrateRoot } from "react-dom/client";
-import { RouterProvider } from "react-router/dom";
-import routes from "./app/routes.js";
-import { createBrowserRouter } from "react-router";
+import { StrictMode } from 'react';
+import { hydrateRoot } from 'react-dom/client';
+import { createBrowserRouter } from 'react-router';
+import { RouterProvider } from 'react-router/dom';
+import routes from './app/routes.js';
 
-let router = createBrowserRouter(routes, {
+const router = createBrowserRouter([routes], {
   // need to ensure this script runs AFTER <StaticRouterProvider> in
   // entry.server.tsx so that window.__staticRouterHydrationData is available
   hydrationData: window.__staticRouterHydrationData,

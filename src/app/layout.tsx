@@ -1,8 +1,8 @@
-import { Form, Link, Outlet, useLoaderData } from "react-router";
-import { type loader } from "./layout.server.js";
+import { Form, Link, Outlet, useLoaderData } from 'react-router';
+import { type loader } from './layout.server.js';
 
 export default function Layout() {
-  let data = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
   return (
     <html>
       <head>
@@ -12,18 +12,18 @@ export default function Layout() {
         <div>
           <h1>React Router Custom Framework</h1>
 
-          <Form method="post">
+          <Form method='post'>
             <p>
               Message: <i>{data.message}</i>
             </p>
             <fieldset>
-              <input name="message" placeholder="Enter a new message" />{" "}
-              <button type="submit">Update</button>
+              <input name='message' placeholder='Enter a new message' />{' '}
+              <button type='submit'>Update</button>
             </fieldset>
           </Form>
 
           <p>
-            <Link to="/">Home</Link> | <Link to="/about">About</Link>
+            <Link to='/'>Home</Link> | <Link to='/about'>About</Link>
           </p>
 
           <hr />
@@ -31,7 +31,7 @@ export default function Layout() {
           <Outlet />
         </div>
 
-        <script defer src="/js/entry.client.js"></script>
+        <script defer src='/js/entry.client.js'></script>
       </body>
     </html>
   );
