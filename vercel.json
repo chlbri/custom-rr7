@@ -1,8 +1,9 @@
 {
-  "rewrites": [
+  "routes": [
     {
-      "source": "/(.*)",
-      "destination": "/"
+      "src": "/.*",
+      "dest": "https://custom-rr7.vercel.app",
+      "status": 200
     }
   ]
 }
