@@ -12,7 +12,7 @@
     "build:client": "esbuild --bundle ./src/entry.client.tsx --outdir=public/js --sourcemap",
     "watch:client": "esbuild --bundle ./src/entry.client.tsx --outdir=public/js --sourcemap --watch",
     "dev": "concurrently 'pnpm run watch:server' 'pnpm run watch:client' 'node --watch ./dist/index.js'",
-    "prev:build": "pnpm run build:server && pnpm run build:client && node ./dist/index.js",
+    "prev:build": "pnpm run build:server && pnpm run build:client",
     "build": "pnpm run prev:build && pnpm run serve",
     "start": "pnpm run prev:build && pnpm run serve",
     "serve": "node ./dist/index.js",
